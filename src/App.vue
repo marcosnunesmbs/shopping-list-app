@@ -49,7 +49,7 @@ onMounted(() => {
   <div class="shopping-list-app min-h-screen">
     <BudgetSection :totalExpenses="totalExpenses" />
 
-    <div class="items-container pt-[26vh] px-4 pb-24 max-w-md mx-auto">
+    <div class="items-container pt-[21vh] px-4 pb-24 max-w-md mx-auto">
       <div v-if="items.length === 0" class="text-center py-10 text-gray-500">
         Nenhum item adicionado. Use o botão + para adicionar itens.
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="budget-container w-full h-1/4 fixed top-0 left-0 right-0 p-4 shadow-md flex flex-col items-center"
+    class="budget-container w-full h-[20vh] fixed top-0 left-0 right-0 p-4 shadow-md flex flex-col items-center"
     :class="{
       'bg-red-100': hasBudget && balanceIsNegative,
       'bg-green-100': !hasBudget || !balanceIsNegative,
