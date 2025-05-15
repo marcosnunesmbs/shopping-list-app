@@ -1,36 +1,41 @@
 <template>
   <div
-    class="budget-container w-full h-1/4 fixed top-0 left-0 right-0 p-4 shadow-md flex flex-col items-center justify-center"
+    class="budget-container w-full h-1/4 fixed top-0 left-0 right-0 p-4 shadow-md flex flex-col items-center"
     :class="{
       'bg-red-100': hasBudget && balanceIsNegative,
       'bg-green-100': !hasBudget || !balanceIsNegative,
     }"
   >
-    <div
-      class="amount-display text-4xl font-bold mb-2"
-      :class="{
-        'text-red-600': hasBudget && balanceIsNegative,
-        'text-green-600': !hasBudget || !balanceIsNegative,
-      }"
-    >
-      <template v-if="hasBudget">
-        {{ balanceIsNegative ? "-" : "" }} R$ {{ formattedBalance }}
-      </template>
-      <template v-else> R$ {{ formattedTotalSpent }} </template>
+    <div class="flex-grow flex flex-col items-center justify-center">
+      <div
+        class="amount-display text-4xl font-bold mb-2"
+        :class="{
+          'text-red-600': hasBudget && balanceIsNegative,
+          'text-green-600': !hasBudget || !balanceIsNegative,
+        }"
+      >
+        <template v-if="hasBudget">
+          {{ balanceIsNegative ? "-" : "" }} R$ {{ formattedBalance }}
+        </template>
+        <template v-else> R$ {{ formattedTotalSpent }} </template>
+      </div>
+      <div v-if="hasBudget" class="budget text-gray-600 text-sm">
+        R$ {{ formattedTotalSpent }} / R$ {{ formattedBudget }}
+      </div>
     </div>
-    <div v-if="hasBudget" class="budget text-gray-600 text-sm mb-4">
-      R$ {{ formattedTotalSpent }} / R$ {{ formattedBudget }}
+
+    <div class="budget-button-container mt-auto pt-2">
+      <button
+        @click="openBudgetModal"
+        class="btn btn-xs"
+        :class="{
+          'bg-red-200': hasBudget && balanceIsNegative,
+          'bg-green-200': !hasBudget || !balanceIsNegative,
+        }"
+      >
+        {{ hasBudget ? "Ajustar Orçamento" : "Adicionar Orçamento" }}
+      </button>
     </div>
-    <button
-      @click="openBudgetModal"
-      class="btn btn-xs"
-      :class="{
-        'bg-red-200': hasBudget && balanceIsNegative,
-        'bg-green-200': !hasBudget || !balanceIsNegative,
-      }"
-    >
-      {{ hasBudget ? "Ajustar Orçamento" : "Adicionar Orçamento" }}
-    </button>
   </div>
 
   <!-- Budget Modal -->
@@ -143,5 +148,15 @@ onMounted(() => {
 <style scoped>
 .budget-container {
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.budget-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 8px;
 }
 </style>
