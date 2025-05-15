@@ -123,7 +123,7 @@ const calculateTotal = computed(() => {
 });
 
 const isFormValid = computed(() => {
-  return item.name && item.quantity > 0 && item.unitPrice > 0;
+  return item.name;
 });
 
 function resetForm() {

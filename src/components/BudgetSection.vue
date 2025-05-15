@@ -2,31 +2,34 @@
   <div
     class="budget-container w-full h-1/4 fixed top-0 left-0 right-0 p-4 shadow-md flex flex-col items-center justify-center"
     :class="{
-      'bg-red-100': balanceIsNegative,
-      'bg-green-100': !balanceIsNegative,
+      'bg-red-100': hasBudget && balanceIsNegative,
+      'bg-green-100': !hasBudget || !balanceIsNegative,
     }"
   >
     <div
-      class="amount-display text-4xl font-bold mb-1"
+      class="amount-display text-4xl font-bold mb-2"
       :class="{
-        'text-red-600': balanceIsNegative,
-        'text-green-600': !balanceIsNegative,
+        'text-red-600': hasBudget && balanceIsNegative,
+        'text-green-600': !hasBudget || !balanceIsNegative,
       }"
     >
-      {{ balanceIsNegative ? "-" : "" }} R$ {{ formattedBalance }}
+      <template v-if="hasBudget">
+        {{ balanceIsNegative ? "-" : "" }} R$ {{ formattedBalance }}
+      </template>
+      <template v-else> R$ {{ formattedTotalSpent }} </template>
     </div>
-    <div class="budget text-gray-600 text-sm mb-4">
-      R$ {{ formattedBudget }}
+    <div v-if="hasBudget" class="budget text-gray-600 text-sm mb-4">
+      R$ {{ formattedTotalSpent }} / R$ {{ formattedBudget }}
     </div>
     <button
       @click="openBudgetModal"
       class="btn btn-xs"
       :class="{
-        'bg-red-200': balanceIsNegative,
-        'bg-green-200': !balanceIsNegative,
+        'bg-red-200': hasBudget && balanceIsNegative,
+        'bg-green-200': !hasBudget || !balanceIsNegative,
       }"
     >
-      Ajustar Orçamento
+      {{ hasBudget ? "Ajustar Orçamento" : "Adicionar Orçamento" }}
     </button>
   </div>
 
@@ -36,7 +39,9 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-80">
-      <h2 class="text-xl font-bold mb-4">Ajustar Orçamento</h2>
+      <h2 class="text-xl font-bold mb-4">
+        {{ hasBudget ? "Ajustar Orçamento" : "Adicionar Orçamento" }}
+      </h2>
       <div class="mb-4">
         <label class="block text-gray-700 mb-2" for="budget"
           >Valor do Orçamento</label
@@ -50,6 +55,7 @@
             class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
+        <span class="text-xs">Digite 0 para remover o orçamento.</span>
       </div>
       <div class="flex justify-end space-x-2">
         <button
@@ -81,9 +87,13 @@ const props = defineProps({
 
 const emit = defineEmits(["update-budget"]);
 
-const budget = ref(100);
+const budget = ref(0);
 const isBudgetModalOpen = ref(false);
-const newBudget = ref(100);
+const newBudget = ref(0);
+
+const hasBudget = computed(() => {
+  return budget.value > 0;
+});
 
 const balance = computed(() => {
   return budget.value - props.totalExpenses;
@@ -101,6 +111,10 @@ const formattedBudget = computed(() => {
   return budget.value.toFixed(2).replace(".", ",");
 });
 
+const formattedTotalSpent = computed(() => {
+  return props.totalExpenses.toFixed(2).replace(".", ",");
+});
+
 function openBudgetModal() {
   newBudget.value = budget.value;
   isBudgetModalOpen.value = true;
@@ -111,7 +125,7 @@ function closeBudgetModal() {
 }
 
 function saveBudget() {
-  budget.value = Number(newBudget.value);
+  budget.value = Math.max(0, Number(newBudget.value));
   localStorage.setItem("shopping-budget", budget.value);
   emit("update-budget", budget.value);
   closeBudgetModal();
