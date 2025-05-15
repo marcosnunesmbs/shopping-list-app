@@ -79,7 +79,10 @@ function editItem() {
 }
 
 function deleteItem() {
-  emit("delete", props.item.id);
+  if (confirm("Tem certeza que deseja excluir este item?")) {
+    // Call the delete function from the parent component
+    emit("delete", props.item.id);
+  }
 }
 </script>
 
