@@ -74,7 +74,7 @@
       </div>
 
       <div class="mb-4 text-right text-gray-600">
-        <strong>Total: R$ {{ calculateTotal }}</strong>
+        <strong>Total: {{ calculateTotal }}</strong>
       </div>
 
       <div class="flex justify-end space-x-2">
@@ -120,8 +120,12 @@ const item = reactive({
 
 const calculateTotal = computed(() => {
   const total = item.quantity * item.unitPrice;
-  return total.toFixed(2).replace(".", ",");
+  return formatCurrency(total);
 });
+
+function formatCurrency(value) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
 
 const isFormValid = computed(() => {
   return item.name;

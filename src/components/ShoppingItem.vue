@@ -1,19 +1,68 @@
 <template>
   <div
     class="item-card bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-3 flex items-center justify-between"
+    :class="{ 'opacity-75': item.checked }"
   >
     <div class="item-info">
-      <div class="item-name font-medium text-neutral">{{ item.name }}</div>
-      <div class="item-details text-sm text-neutral">
-        {{ item.quantity }} x R$ {{ formatCurrency(item.unitPrice) }}
+      <div
+        class="item-name font-medium text-neutral"
+        :class="{ 'line-through text-gray-500': item.checked }"
+      >
+        {{ item.name }}
+      </div>
+      <div
+        class="item-details text-sm text-neutral"
+        :class="{ 'line-through text-gray-500': item.checked }"
+      >
+        {{ item.quantity }} x {{ formatCurrency(item.unitPrice) }}
       </div>
     </div>
     <div class="flex items-center">
-      <div class="item-total font-bold text-lg mr-4">
+      <div
+        class="item-total font-bold text-lg mr-4"
+        :class="{ 'line-through text-gray-500': item.checked }"
+      >
         {{ formatCurrency(item.total) }}
       </div>
       <div class="item-actions flex space-x-1">
         <button
+          @click="toggleCheck"
+          class="text-success hover:text-gray-600 transition-colors p-1"
+          :title="item.checked ? 'Desmarcar' : 'Marcar como comprado'"
+        >
+          <svg
+            v-if="!item.checked"
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <button
+          v-if="!item.checked"
           @click="editItem"
           class="text-info hover:text-gray-600 transition-colors p-1"
           title="Editar"
@@ -34,6 +83,7 @@
           </svg>
         </button>
         <button
+          v-if="!item.checked"
           @click="deleteItem"
           class="text-error hover:text-gray-600 transition-colors p-1"
           title="Excluir"
@@ -68,10 +118,10 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["edit", "delete"]);
+const emit = defineEmits(["edit", "delete", "toggle-check"]);
 
 function formatCurrency(value) {
-  return value.toFixed(2).replace(".", ",");
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 function editItem() {
@@ -80,9 +130,12 @@ function editItem() {
 
 function deleteItem() {
   if (confirm("Tem certeza que deseja excluir este item?")) {
-    // Call the delete function from the parent component
     emit("delete", props.item.id);
   }
+}
+
+function toggleCheck() {
+  emit("toggle-check", props.item.id);
 }
 </script>
 

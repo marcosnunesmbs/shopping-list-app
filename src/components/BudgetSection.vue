@@ -15,12 +15,12 @@
         }"
       >
         <template v-if="hasBudget">
-          {{ balanceIsNegative ? "-" : "" }} R$ {{ formattedBalance }}
+          {{ balanceIsNegative ? "-" : "" }} {{ formattedBalance }}
         </template>
         <template v-else> R$ {{ formattedTotalSpent }} </template>
       </div>
       <div v-if="hasBudget" class="budget text-gray-600 text-sm">
-        R$ {{ formattedTotalSpent }} / R$ {{ formattedBudget }}
+        R$ {{ formattedTotalSpent }} / {{ formattedBudget }}
       </div>
     </div>
 
@@ -110,15 +110,19 @@ const balanceIsNegative = computed(() => {
 });
 
 const formattedBalance = computed(() => {
-  return Math.abs(balance.value).toFixed(2).replace(".", ",");
+  return formatCurrency(Math.abs(balance.value));
 });
 
 const formattedBudget = computed(() => {
-  return budget.value.toFixed(2).replace(".", ",");
+  return formatCurrency(budget.value);
 });
 
+function formatCurrency(value) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
 const formattedTotalSpent = computed(() => {
-  return props.totalExpenses.toFixed(2).replace(".", ",");
+  return formatCurrency(props.totalExpenses);
 });
 
 function openBudgetModal() {
