@@ -17,7 +17,7 @@
         <template v-if="hasBudget">
           {{ balanceIsNegative ? "-" : "" }} {{ formattedBalance }}
         </template>
-        <template v-else> R$ {{ formattedTotalSpent }} </template>
+        <template v-else> {{ formattedTotalSpent }} </template>
       </div>
       <div v-if="hasBudget" class="budget text-gray-600 text-sm">
         R$ {{ formattedTotalSpent }} / {{ formattedBudget }}
